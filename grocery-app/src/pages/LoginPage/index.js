@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './index.css'
 
-const Login = () => {
+const LoginPage = () => {
     const [user, setUser] = useState({
-        username: '',
+        email: '',
         password: ''
     })
 
@@ -22,11 +23,20 @@ const Login = () => {
 
     function onSubmitHandler(e) {
         e.preventDefault()
-        if (validate()) {
-            console.log(user)
-        } else {
-            console.log('error')
-        }
+        // if (validate()) {
+        //     console.log(user)
+        // } else {
+        //     console.log('error')
+        // }
+        axios.post('https://apolis-grocery.herokuapp.com/api/auth/login', user)
+        .then(response => {
+            console.log(response.data)
+        },(error) => {
+            console.log(error)
+        })
+        .catch(
+            error => console.error(error)
+        )
     }
 
     function validate() {
@@ -53,10 +63,10 @@ const Login = () => {
                 <div className="col-lg-6">
                     <div className="wrapper">
                         <h1>Login</h1>
-                        <form onSubmit={onSubmitHandler}>
+                        <form method="post" onSubmit={onSubmitHandler}>
                             <div className="form-group">
-                                <label htmlFor="">Username</label>
-                                <input type="text" className="form-control" value={user.username} name="username" onChange={onChangeHandler} />
+                                <label htmlFor="">Email</label>
+                                <input type="email" className="form-control" value={user.email} name="email" onChange={onChangeHandler} />
                                 <small className="text-danger">{errorMessage.userNameError}</small>
                             </div>
 
@@ -76,4 +86,4 @@ const Login = () => {
         </div>
     )
 }
-export default Login;
+export default LoginPage;

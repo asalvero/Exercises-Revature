@@ -1,20 +1,21 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import './index.css'
 
-const Register = () => {
+const RegisterPage = () => {
 
     const [user, setUser] = useState({
-        username: '',
+        firstName: '',
         email: '',
-        password: ''
+        password: '',
+        mobile: ''
     })
 
     const [errorMessage, setErrorMessage] = useState({
-        userNameError: '',
-        emailError: ''
+        firstNameError: '',
+        passwordError: '',
+        error: ''
     })
-
-    const countries = ['USA', 'UK', 'China']
 
     function onChangeHandler(event) {
         // console.log(event.target.name)
@@ -26,25 +27,18 @@ const Register = () => {
 
     function onSubmitHandler(e) {
         e.preventDefault()
-        if (validate()) {
-            console.log(user)
-        } else {
-            console.log('error')
-        }
-
-    }
-
-    function onCheckboxChange(event) {
-        var array = []
-        var checkboxes = document.querySelectorAll('input[name="' + event.target.name + '"]:checked')
-        for (var i = 0; i < checkboxes.length; i++) {
-            array.push(checkboxes[i].value)
-        }
-        setUser({
-            ...user,
-            [event.target.name]: array,
+        // if (validate()) {
+        //     console.log(user)
+        // } else {
+        //     console.log('error')
+        // }
+        axios.post('https://apolis-grocery.herokuapp.com/api/auth/register', user)
+        .then(response => {
+            console.log(response.data)
         })
-        console.log(array);
+        .catch(
+            error => console.error(error)
+        )
     }
 
     function validate() {
@@ -54,10 +48,15 @@ const Register = () => {
                 userNameError: 'Name is required'
             })
             return false
+        }else if(user.password.length <= 6 ){
+            setErrorMessage({
+                ...errorMessage,
+                passwordError: 'Password must be at least 6 characters'
+            })
         } else {
             setErrorMessage({
                 ...errorMessage,
-                userNameError: 'Email is '
+                error: 'Please try again later'
             })
             return true;
         }
@@ -71,22 +70,29 @@ const Register = () => {
                 <div className="col-lg-6">
                     <div className="wrapper">
                         <h1>Register</h1>
-                        <form onSubmit={onSubmitHandler} >
+                        <form method="post" onSubmit={onSubmitHandler} >
                             <div className="form-group">
-                                <label htmlFor="">Username</label>
-                                <input type="text" className="form-control" value={user.username} name="username" onChange={onChangeHandler} />
+                                <label htmlFor="">First Name</label>
+                                <input type="text" className="form-control" value={user.firstName} name="firstName" onChange={onChangeHandler} />
                                 <small className="text-danger">{errorMessage.userNameError}</small>
                             </div>
 
                             <div className="form-group">
                                 <label htmlFor="">Email</label>
-                                <input type="text" className="form-control" value={user.email} name="email" onChange={onChangeHandler} />
+                                <input type="email" className="form-control" value={user.email} name="email" value={user.email} onChange={onChangeHandler} />
                                 <small className="text-danger">{errorMessage.emailError}</small>
                             </div>
 
                             <div className="form-group">
+                                <label htmlFor="">Mobile</label>
+                                <input type="text" className="form-control" value={user.mobile} name="mobile" value={user.mobile} onChange={onChangeHandler} />
+                                
+                            </div>
+
+                            <div className="form-group">
                                 <label htmlFor="">Password</label>
-                                <input type="password" className="form-control" value={user.password} name="password" onChange={onChangeHandler} />
+                                <input type="password" className="form-control" value={user.password} name="password" value={user.password} onChange={onChangeHandler} />
+                                <small className="text-danger">{errorMessage.passwordError}</small>
                             </div>
 
                             <div>
@@ -94,11 +100,10 @@ const Register = () => {
                             </div>
                         </form>
                     </div>
-                    <h1>{user.username}, {user.email}, {user.password}</h1>
                 </div>
                 <div className="col-lg-3"></div>
             </div>
         </div>
     )
 }
-export default Register;
+export default RegisterPage;
